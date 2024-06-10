@@ -4,6 +4,7 @@
   "description": "Simple Soical Media App",
   "main": "app.js",
   "scripts": {
+    "build": "echo \"No build steps required\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "nodemon app.js",
     "start:dev": "cross-env NODE_ENV=development nodemon app.js",
