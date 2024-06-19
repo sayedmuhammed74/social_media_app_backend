@@ -4,7 +4,12 @@ const Post = require('./../models/postModel');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
-  const posts = await Post.find().sort({ createdAt: -1 });
+  let posts;
+  if (req.query.userId) {
+    posts = await Post.find({ user: req.query.userId }).sort({ createdAt: -1 });
+  } else {
+    posts = await Post.find().sort({ createdAt: -1 });
+  }
 
   res.status(200).json({
     status: 'success',

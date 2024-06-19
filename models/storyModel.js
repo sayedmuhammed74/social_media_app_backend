@@ -11,11 +11,24 @@ const storySchema = new Schema(
     text: String,
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
+    },
+    expiresIn: {
+      type: Date,
+      default: function () {
+        return new Date(Date.now() + 24 * 60 * 60 * 1000);
+      },
     },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+// storySchema.virtual('_friendIds', {
+//   ref: 'Request',
+//   localField: 'user',
+//   foreignField: 'from',
+//   justOne: false,
+// });
 
 storySchema.pre('validate', function (next) {
   if (!this.img && !this.text) {
@@ -29,6 +42,7 @@ storySchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
     select: '-email -role -createdAt -birthdate -bio -__v',
+    // match: { _id: { $in: this._friendIds } },
   });
   next();
 });

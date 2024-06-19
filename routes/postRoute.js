@@ -3,9 +3,9 @@ const router = express.Router();
 
 // controllers
 const { getAllPosts, createPost } = require('../controllers/postController');
-const { protect, restrictTo } = require('../controllers/authController');
+const { protect } = require('../controllers/authController');
 
 router.use(protect);
-router.route('/').get(restrictTo('user'), getAllPosts).post(createPost);
+router.route('/').get(getAllPosts).post(createPost);
 
 module.exports = router;

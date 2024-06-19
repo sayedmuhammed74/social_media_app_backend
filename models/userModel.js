@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const bcrypt = require('bcryptjs');
+const slugify = require('slugify');
 
 const userSchema = new Schema(
   {
@@ -10,6 +11,13 @@ const userSchema = new Schema(
     lastname: {
       type: String,
       required: [true, 'Please tell us your lastname'],
+    },
+    fullname: {
+      type: String,
+      required: true,
+    },
+    slug: {
+      type: String,
     },
     email: {
       type: String,
@@ -43,6 +51,7 @@ const userSchema = new Schema(
     },
     bio: String,
     picture: { type: String, default: './imgs/users/no-user.svg' },
+    cover: { type: String, default: './imgs/profile-cover.jpg' },
     birthdate: Date,
     active: {
       type: Boolean,
@@ -71,6 +80,18 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.checkPassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
+
+// Pre-save middleware to generate the slug
+userSchema.pre('save', function (next) {
+  this.slug = slugify(`${this.firstname}-${this.lastname}`, { lower: true });
+  next();
+});
+
+// Pre-save middleware to generate the fullname
+userSchema.pre('save', function (next) {
+  this.fullname = `${this.firstname} ${this.lastname}`;
+  next();
+});
 
 const User = model('User', userSchema);
 
