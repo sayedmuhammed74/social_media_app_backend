@@ -22,7 +22,6 @@ app.get('/', (req, res) => {
 });
 
 app.get('/keep-alive', (req, res) => {
-  console.log('keep alive response');
   res.send('keep alive response');
 });
 

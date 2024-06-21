@@ -77,7 +77,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
   token = token.split(' ')[1];
   // verify token
-  const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
   const user = await User.findOne({ _id: decoded.id });
 
