@@ -20,25 +20,24 @@ const {
 router.route('/signup').post(signup);
 router.route('/login').post(login);
 
+router.use(protect);
+
 // Stories
-router.route('/stories').get(protect, getAllStories).post(protect, createStory);
+router.route('/stories').get(getAllStories).post(createStory);
 
 // Requests
-router
-  .route('/requests')
-  .get(protect, getAllFriendRequests)
-  .post(protect, createFriendRequest);
+router.route('/requests').get(getAllFriendRequests).post(createFriendRequest);
 
 router
   .route('/requests/:id')
-  .patch(protect, acceptFriendRequest)
-  .delete(protect, cancelFriendRequest);
+  .patch(acceptFriendRequest)
+  .delete(cancelFriendRequest);
 
 // Freinds
-router.route('/friends').get(protect, getAllFriends);
+router.route('/friends').get(getAllFriends);
 
 //   Users
-router.route('/').get(protect, getAllUsers);
+router.route('/').get(getAllUsers);
 router.route('/:slug').get(getUser);
 
 module.exports = router;
