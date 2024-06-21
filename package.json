@@ -6,9 +6,7 @@
   "scripts": {
     "build": "echo \"No build steps required\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "NODE_ENV=production node app.js",
-    "start:dev": "cross-env NODE_ENV=development nodemon app.js",
-    "start:prod": "cross-env NODE_ENV=production nodemon app.js"
+    "server": "NODE_ENV=production node app.js"
   },
   "author": "Sayed Mohamed",
   "license": "ISC",
