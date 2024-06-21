@@ -22,8 +22,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/keep-alive', (req, res) => {
-  console.log('Keep-alive request received.');
-  res.send('Keep-alive response');
+  console.log('keep alive response');
+  res.send('keep alive response');
 });
 
 // routes
