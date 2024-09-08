@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
-const keepServerAlive = require('./keep-alive');
+
 // Routes
 const userRoute = require('./routes/userRoute');
 const postRoute = require('./routes/postRoute');
@@ -21,17 +21,9 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello from the server</h1>');
 });
 
-app.get('/keep-alive', (req, res) => {
-  res.send('keep alive response');
-});
-
 // routes
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/posts', postRoute);
-
-setInterval(() => {
-  keepServerAlive();
-}, 1000 * 60 * 10);
 
 // Errors handling (route doen't exist)
 app.all('*', (req, res, next) => {
