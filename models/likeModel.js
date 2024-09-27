@@ -18,11 +18,11 @@ const likeSchema = new Schema(
     },
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
     updatedAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }

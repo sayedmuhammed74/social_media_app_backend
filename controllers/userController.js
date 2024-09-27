@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 // Models
 const Story = require('../models/storyModel');
 const User = require('./../models/userModel');
@@ -9,7 +10,12 @@ const catchAsync = require('../utils/catchAsync');
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.find({
-    fullname: { $regex: new RegExp(req.query.name, 'i') },
+    $or: [
+      {
+        firstname: { $regex: new RegExp(req.query.name, 'i') },
+      },
+      { lastname: { $regex: new RegExp(req.query.name, 'i') } },
+    ],
     _id: { $ne: req.user._id },
   });
   res.status(200).json({
@@ -84,9 +90,12 @@ exports.createStory = catchAsync(async (req, res, next) => {
 });
 
 // Friends Requests Controllers
-
 exports.getAllFriendRequests = catchAsync(async (req, res, next) => {
-  const requests = await Request.find({ to: req.user._id, status: 'pending' });
+  const requests = await Request.find({
+    to: req.user._id,
+    status: 'pending',
+  }).populate('from');
+
   res.status(200).json({
     status: 'success',
     results: requests.length,
@@ -106,14 +115,6 @@ exports.createFriendRequest = catchAsync(async (req, res, next) => {
     data: {
       request,
     },
-  });
-});
-
-exports.cancelFriendRequest = catchAsync(async (req, res, next) => {
-  await Request.findByIdAndDelete(req.params.id);
-  res.status(204).json({
-    status: 'success',
-    data: null,
   });
 });
 
@@ -139,10 +140,28 @@ exports.cancelFriendRequest = catchAsync(async (req, res, next) => {
 
 // Friends Controllers
 exports.getAllFriends = catchAsync(async (req, res, next) => {
-  const friends = await Request.find({
+  const requests = await Request.find({
     $or: [{ to: req.user._id }, { from: req.user._id }],
     status: 'accepted',
+  })
+    .populate({
+      path: 'from',
+      select: '-role -createdAt -updatedAt -__v -id',
+    })
+    .populate({
+      path: 'to',
+      select: '-role -createdAt -updatedAt -__v -id',
+    });
+
+  // Extract friends from the requests
+  const friends = requests.map((request) => {
+    if (request.from._id.equals(req.user._id)) {
+      return request.to; // The 'to' field is the friend
+    } else {
+      return request.from; // The 'from' field is the friend
+    }
   });
+
   res.status(200).json({
     status: 'success',
     results: friends.length,
@@ -152,15 +171,20 @@ exports.getAllFriends = catchAsync(async (req, res, next) => {
   });
 });
 
-// Search
-// exports.search = catchAsync(async (req, res, next) => {
-//   const results = await User.find({
-//     fullname: { $regex: new RegExp(`\\b${req.query.searchValue}\\b`, 'i') },
-//   });
-//   res.status(200).json({
-//     status: 'success',
-//     data: {
-//       results,
-//     },
-//   });
-// });
+exports.getRequest = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const request = await Request.findOne({
+    $or: [
+      { to: req.user._id, from: id },
+      { from: req.user._id, to: id },
+    ],
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      request,
+    },
+  });
+});

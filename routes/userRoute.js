@@ -12,8 +12,8 @@ const {
   cancelFriendRequest,
   createFriendRequest,
   acceptFriendRequest,
-  deleteFriendRequest,
   getAllFriends,
+  getRequest,
 } = require('../controllers/userController');
 
 // Auth
@@ -30,6 +30,7 @@ router.route('/requests').get(getAllFriendRequests).post(createFriendRequest);
 
 router
   .route('/requests/:id')
+  .get(getRequest)
   .patch(acceptFriendRequest)
   .delete(cancelFriendRequest);
 

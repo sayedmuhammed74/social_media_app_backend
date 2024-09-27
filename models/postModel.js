@@ -14,7 +14,11 @@ const postSchema = new Schema(
     media: [String],
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
     },
     tags: {
       type: [Types.ObjectId],
@@ -38,6 +42,7 @@ const postSchema = new Schema(
       type: Date,
       default: Date.now,
     },
+    tags: [{ type: String }],
     updatedAt: {
       type: Date,
       default: Date.now,

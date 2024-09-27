@@ -2,24 +2,19 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
-
+const morgan = require('morgan');
 // Routes
 const userRoute = require('./routes/userRoute');
 const postRoute = require('./routes/postRoute');
-
 // utils
 const AppError = require('./utils/AppError');
 // Global Error Controller
 const globalErrorHandler = require('./controllers/errorController');
 
 require('dotenv').config();
+app.use(morgan('dev'));
 app.use(cors());
-// body parser
 app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.send('<h1>Hello from the server</h1>');
-});
 
 // routes
 app.use('/api/v1/users', userRoute);
@@ -27,15 +22,19 @@ app.use('/api/v1/posts', postRoute);
 
 // Errors handling (route doen't exist)
 app.all('*', (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
+  return next(
+    new AppError(`Can't find ${req.originalUrl} on this server`, 404)
+  );
 });
 
 // Global handling middleware
 app.use(globalErrorHandler);
 
 // connection
-const DB = process.env.DB_URL;
-mongoose.connect(DB).then(() => console.log('connection success'));
+mongoose
+  .connect(process.env.LOCAL_DB_URL)
+  .then(() => console.log('connection success'))
+  .catch(() => console.log('failed to connect to DB'));
 
 // listen
 const server = app.listen(process.env.PORT, () =>

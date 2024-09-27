@@ -19,6 +19,12 @@ const storySchema = new Schema(
         return new Date(Date.now() + 24 * 60 * 60 * 1000);
       },
     },
+    // expiresIn: {
+    //   type: Date,
+    //   default: function () {
+    //     return new Date(Date.now() + (this.customExpiry || 24 * 60 * 60 * 1000)); // Allow custom expiry
+    //   },
+    // },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

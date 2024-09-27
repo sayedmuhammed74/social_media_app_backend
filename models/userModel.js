@@ -12,10 +12,6 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Please tell us your lastname'],
     },
-    fullname: {
-      type: String,
-      required: true,
-    },
     slug: {
       type: String,
     },
@@ -60,14 +56,24 @@ const userSchema = new Schema(
     },
     createdAt: {
       type: Date,
-      default: new Date(),
+      default: Date.now,
     },
-    updatedAt: Date,
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-// encypt password before save
+// Static Methods //
+// correct password in login
+userSchema.methods.checkPassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Middlewares //
+// Pre-save middleware to encypt password before save
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) next();
 
@@ -76,20 +82,9 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// correct password in login
-userSchema.methods.checkPassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
-};
-
 // Pre-save middleware to generate the slug
 userSchema.pre('save', function (next) {
   this.slug = slugify(`${this.firstname}-${this.lastname}`, { lower: true });
-  next();
-});
-
-// Pre-save middleware to generate the fullname
-userSchema.pre('save', function (next) {
-  this.fullname = `${this.firstname} ${this.lastname}`;
   next();
 });
 
