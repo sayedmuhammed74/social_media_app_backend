@@ -14,17 +14,27 @@ const globalErrorHandler = require('./controllers/errorController');
 
 require('dotenv').config();
 // app.use(morgan('dev'));
+
+// CORs
+const allowedOrigins = [
+  'https://social-media-app-backend-hsgm.onrender.com',
+  'http://localhost:5173', // Your React app's URL
+];
+
 app.use(
-  cors()
-  // {
-  //   origin: 'http://localhost:5173', // Your React app's URL
-  //   credentials: true,
-  // },
-  // {
-  //   origin: 'https://social-media-app-backend-hsgm.onrender.com',
-  //   credentials: true,
-  // }
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, origin);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true, // This allows cookies to be sent and received
+  })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 // routes
