@@ -34,7 +34,7 @@ app.use(
     credentials: true, // This allows cookies to be sent and received
   })
 );
-
+app.options('*', cors());
 app.use(express.json());
 app.use(cookieParser());
 // routes
