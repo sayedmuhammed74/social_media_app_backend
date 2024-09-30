@@ -15,10 +15,16 @@ const globalErrorHandler = require('./controllers/errorController');
 require('dotenv').config();
 // app.use(morgan('dev'));
 app.use(
-  cors({
-    origin: 'http://localhost:5173', // Your React app's URL
-    credentials: true,
-  })
+  cors(
+    {
+      origin: 'http://localhost:5173', // Your React app's URL
+      credentials: true,
+    },
+    {
+      origin: 'https://social-media-app-backend-hsgm.onrender.com',
+      credentials: true,
+    }
+  )
 );
 app.use(express.json());
 app.use(cookieParser());
