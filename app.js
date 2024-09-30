@@ -31,10 +31,10 @@ app.use(
         callback(new Error('Not allowed by CORS'));
       }
     },
-    credentials: true, // This allows cookies to be sent and received
+    // credentials: true, // This allows cookies to be sent and received
   })
 );
-// app.options('*', cors());
+app.options('*', cors());
 app.use(express.json());
 app.use(cookieParser());
 // routes
