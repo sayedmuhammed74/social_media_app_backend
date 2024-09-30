@@ -12,37 +12,15 @@ const postSchema = new Schema(
       required: true,
     },
     media: [String],
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
-    },
     tags: {
       type: [Types.ObjectId],
       ref: 'User',
     },
-    likes: [
-      {
-        type: Types.ObjectId,
-        ref: 'Like',
-      },
-    ],
-    comments: [
-      {
-        type: Types.ObjectId,
-        ref: 'Comment',
-      },
-    ],
-    totalLikes: { type: Number, default: 0 },
-    totalComments: { type: Number, default: 0 },
+    tags: [{ type: String }],
     createdAt: {
       type: Date,
       default: Date.now,
     },
-    tags: [{ type: String }],
     updatedAt: {
       type: Date,
       default: Date.now,

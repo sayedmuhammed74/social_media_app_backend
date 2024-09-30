@@ -46,7 +46,11 @@ const userSchema = new Schema(
       enum: ['user', 'admin'],
     },
     bio: String,
-    picture: { type: String, default: './imgs/users/no-user.svg' },
+    picture: {
+      type: String,
+      default:
+        'https://res.cloudinary.com/dcltvh825/image/upload/v1727591596/users/szd1rbd4urol2ehagtsc.svg',
+    },
     cover: { type: String, default: './imgs/profile-cover.jpg' },
     birthdate: Date,
     active: {

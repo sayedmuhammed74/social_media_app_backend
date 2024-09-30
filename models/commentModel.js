@@ -10,7 +10,7 @@ const commentSchema = new Schema(
     post: {
       type: Types.ObjectId,
       ref: 'Post',
-      required: true,
+      required: [true, 'comment can not be empty'],
     },
     likes: [
       {
@@ -18,17 +18,17 @@ const commentSchema = new Schema(
         ref: 'Like',
       },
     ],
-    description: {
+    content: {
       type: String,
       required: true,
     },
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
     updatedAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }

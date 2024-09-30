@@ -14,14 +14,19 @@ const signToken = (id) => {
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, res, req) => {
   const token = signToken(user._id);
   user.password = undefined;
   // const cookieOptions = {
   //   expires: process.env.JWT_COOCKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
   //   httpOnly: true,
   // };
-  res.cookie('jwt', token);
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: false,
+    expires: process.env.JWT_COOCKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+    sameSite: 'Lax',
+  });
   res.status(statusCode).json({
     status: 'success',
     token,
@@ -51,26 +56,19 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // check  if data exist
   if (!email || !password) {
-    res.status(400).json({
-      status: 'fail',
-      message: 'Please provide email & password',
-    });
+    return next(new AppError('Please provide email & password', 400));
   }
 
   // check if user exist
   const user = await User.findOne({ email }).select('+password');
   if (!user || !(await user.checkPassword(password))) {
-    // res.status(401).json({
-    //   status: 'fail',
-    //   message: 'Incorrect email or password',
-    // });
     return next(new AppError('Incorrect email or password', 401));
   }
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, res, req);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-  let token = req.headers.authorization;
+  let token = req.headers.authorization || req.cookies.jwt;
   if (!token || !token.startsWith('Bearer')) {
     return next(new AppError('You have to login first', 401));
   }
@@ -90,7 +88,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return next(new AppError("You don't have the permision", 401));
+      return next(new AppError("You don't have this permision", 401));
     }
     next();
   };

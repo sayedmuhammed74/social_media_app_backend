@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 // Routes
 const userRoute = require('./routes/userRoute');
 const postRoute = require('./routes/postRoute');
@@ -12,10 +13,15 @@ const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./controllers/errorController');
 
 require('dotenv').config();
-app.use(morgan('dev'));
-app.use(cors());
+// app.use(morgan('dev'));
+app.use(
+  cors({
+    origin: 'http://localhost:5173', // Your React app's URL
+    credentials: true,
+  })
+);
 app.use(express.json());
-
+app.use(cookieParser());
 // routes
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/posts', postRoute);
@@ -32,7 +38,7 @@ app.use(globalErrorHandler);
 
 // connection
 mongoose
-  .connect(process.env.LOCAL_DB_URL)
+  .connect(process.env.DB_URL)
   .then(() => console.log('connection success'))
   .catch(() => console.log('failed to connect to DB'));
 

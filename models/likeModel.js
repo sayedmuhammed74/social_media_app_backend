@@ -10,17 +10,12 @@ const likeSchema = new Schema(
     post: {
       type: Types.ObjectId,
       ref: 'Post',
-      required: true,
     },
     comment: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Types.ObjectId,
       ref: 'Comment',
     },
     createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
       type: Date,
       default: Date.now,
     },
