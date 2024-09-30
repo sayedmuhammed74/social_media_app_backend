@@ -14,7 +14,7 @@ const globalErrorHandler = require('./controllers/errorController');
 
 require('dotenv').config();
 // app.use(morgan('dev'));
-
+// app.use(cors());
 // CORs
 const allowedOrigins = [
   'https://social-media-app-backend-hsgm.onrender.com',
@@ -34,7 +34,7 @@ app.use(
     credentials: true, // This allows cookies to be sent and received
   })
 );
-app.options('*', cors());
+// app.options('*', cors());
 app.use(express.json());
 app.use(cookieParser());
 // routes
