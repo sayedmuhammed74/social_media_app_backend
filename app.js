@@ -17,7 +17,7 @@ app.use(morgan('dev'));
 // CORs
 // app.use(cors());
 const allowedOrigins = [
-  'https://social-media-app-backend-hsgm.onrender.com',
+  'https://full-stack-social-app.vercel.app',
   'http://localhost:5173', // Your React app's URL
 ];
 
