@@ -34,6 +34,14 @@ const commentSchema = new Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+commentSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: '-cover -email -role -createdAt -updatedAt -__v',
+  }); // Populate user
+  next();
+});
+
 const Comment = model('Comment', commentSchema);
 
 module.exports = Comment;

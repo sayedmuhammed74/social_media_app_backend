@@ -21,12 +21,12 @@ const createSendToken = (user, statusCode, res, req) => {
   //   expires: process.env.JWT_COOCKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
   //   httpOnly: true,
   // };
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: false,
-    expires: process.env.JWT_COOCKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
-    sameSite: 'Lax',
-  });
+  // res.cookie('token', token, {
+  //   httpOnly: true,
+  //   secure: false,
+  //   expires: process.env.JWT_COOCKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+  //   sameSite: 'Lax',
+  // });
   res.status(statusCode).json({
     status: 'success',
     token,

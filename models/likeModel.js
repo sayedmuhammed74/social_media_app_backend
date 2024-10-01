@@ -23,6 +23,14 @@ const likeSchema = new Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+likeSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: '-cover -email -role -createdAt -updatedAt -__v',
+  }); // Populate user
+  next();
+});
+
 const Like = model('Like', likeSchema);
 
 module.exports = Like;

@@ -7,14 +7,38 @@ const Comment = require('../models/commentModel');
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
   let posts;
+  let totalPosts;
+  let totalPages;
+  const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+  const limit = parseInt(req.query.limit) || 10;
+
+  // Calculate the number of documents to skip
+  const skip = (page - 1) * limit;
+
   if (req.query.userId) {
-    posts = await Post.find({ user: req.query.userId }).sort({ createdAt: -1 });
+    posts = await Post.find({ user: req.query.userId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+    totalPosts = await Post.find({ user: req.query.userId }).countDocuments(); // Get total number of posts
+    totalPages = Math.ceil(totalPosts / limit); // Calculate total pages
   } else {
-    posts = await Post.find().sort({ createdAt: -1 });
+    posts = await Post.find({ user: { $ne: req.user._id } })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+    totalPosts = await Post.find({
+      user: { $ne: req.user._id },
+    }).countDocuments(); // Get total number of posts
+    totalPages = Math.ceil(totalPosts / limit); // Calculate total pages
   }
+
   res.status(200).json({
     status: 'success',
     results: posts.length,
+    totalPosts,
+    totalPages,
+    currentPage: page,
     data: {
       posts,
     },
@@ -87,7 +111,7 @@ exports.getAllLikes = catchAsync(async (req, res, next) => {
 });
 
 exports.addLike = catchAsync(async (req, res, next) => {
-  const like = await Like.create({
+  let like = await Like.create({
     user: req.user._id,
     post: req.params.postId,
   });

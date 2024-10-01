@@ -13,9 +13,9 @@ const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./controllers/errorController');
 
 require('dotenv').config();
-// app.use(morgan('dev'));
-// app.use(cors());
+app.use(morgan('dev'));
 // CORs
+// app.use(cors());
 const allowedOrigins = [
   'https://social-media-app-backend-hsgm.onrender.com',
   'http://localhost:5173', // Your React app's URL
@@ -34,6 +34,7 @@ app.use(
     // credentials: true, // This allows cookies to be sent and received
   })
 );
+
 app.options('*', cors());
 app.use(express.json());
 app.use(cookieParser());
