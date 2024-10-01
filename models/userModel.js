@@ -6,21 +6,27 @@ const userSchema = new Schema(
   {
     firstname: {
       type: String,
-      required: [true, 'Please tell us your firstname'],
+      required: [true, 'Please provide your firstname'],
+      trim: true,
     },
     lastname: {
       type: String,
-      required: [true, 'Please tell us your lastname'],
+      required: [true, 'Please provide your lastname'],
+      trim: true,
     },
     slug: {
       type: String,
     },
     email: {
       type: String,
-      required: [true, 'Please provide a email'],
-      unique: [true, 'This email is aready exist'],
+      required: [true, 'Please provide an email'],
+      unique: [true, 'This email is already existed'],
       lowercase: true,
-      // validate later
+      trim: true,
+      match: [
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Regex for basic email validation
+        'Please fill a valid email address',
+      ],
     },
     password: {
       type: String,
@@ -51,7 +57,11 @@ const userSchema = new Schema(
       default:
         'https://res.cloudinary.com/dcltvh825/image/upload/v1727591596/users/szd1rbd4urol2ehagtsc.svg',
     },
-    cover: { type: String, default: './imgs/profile-cover.jpg' },
+    cover: {
+      type: String,
+      default:
+        'https://res.cloudinary.com/dcltvh825/image/upload/v1727788976/users/nmc6eivzyjbucqrgrwn3.jpg',
+    },
     birthdate: Date,
     active: {
       type: Boolean,

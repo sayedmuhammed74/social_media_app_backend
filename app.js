@@ -13,7 +13,7 @@ const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./controllers/errorController');
 
 require('dotenv').config();
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 // CORs
 // app.use(cors());
 const allowedOrigins = [
