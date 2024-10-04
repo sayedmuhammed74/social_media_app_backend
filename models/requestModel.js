@@ -22,17 +22,6 @@ const requestSchema = new Schema({
   },
 });
 
-// requestSchema.pre(/^find/, function (next) {
-//   this.populate({
-//     path: 'from',
-//     select: '-email -role -createdAt -birthdate -bio -__v',
-//   }).populate({
-//     path: 'to',
-//     select: '-email -role -createdAt -birthdate -bio -__v',
-//   });
-//   next();
-// });
-
 const Request = model('Request', requestSchema);
 
 module.exports = Request;

@@ -16,8 +16,24 @@ const {
   getRequest,
 } = require('../controllers/userController');
 
+// Uoload Product Image
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('./../utils/cloudinaryConfig');
+
+// Creare Cloudinary Storage
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'users', // Specify the folder in your Cloudinary account
+    allowed_formats: ['jpg', 'png', 'jpeg'], // Allowed formats
+  },
+});
+
+const upload = multer({ storage: storage });
+
 // Auth
-router.route('/signup').post(signup);
+router.route('/signup').post(upload.single('picture'), signup);
 router.route('/login').post(login);
 
 router.use(protect);

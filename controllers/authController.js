@@ -14,7 +14,7 @@ const signToken = (id) => {
   });
 };
 
-const createSendToken = (user, statusCode, res, req) => {
+const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   user.password = undefined;
   // const cookieOptions = {
@@ -27,6 +27,7 @@ const createSendToken = (user, statusCode, res, req) => {
   //   expires: process.env.JWT_COOCKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
   //   sameSite: 'Lax',
   // });
+
   res.status(statusCode).json({
     status: 'success',
     token,
@@ -36,16 +37,30 @@ const createSendToken = (user, statusCode, res, req) => {
   });
 };
 
-exports.signup = catchAsync(async (req, res) => {
+exports.signup = catchAsync(async (req, res, next) => {
+  if (!req.file) {
+    return next(new AppError('failed to upload the image', 400));
+  }
+
+  const {
+    firstname,
+    lastname,
+    email,
+    password,
+    passwordConfirm,
+    bio,
+    birthdate,
+  } = req.body;
+
   const newUser = await User.create({
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-    bio: req.body.bio,
-    picture: req.body.picture,
-    birthdate: req.body.birthdate,
+    firstname,
+    lastname,
+    email,
+    password,
+    passwordConfirm,
+    bio,
+    birthdate,
+    picture: req.file.path,
   });
 
   createSendToken(newUser, 201, res);

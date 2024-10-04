@@ -4,6 +4,9 @@ const cors = require('cors');
 const app = express();
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const hemlet = require('helmet');
+
+app.use(hemlet());
 // Routes
 const userRoute = require('./routes/userRoute');
 const postRoute = require('./routes/postRoute');
