@@ -59,7 +59,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordConfirm,
     bio,
     birthdate,
-    // picture: req.file.path,
+    picture: req.file.path,
   });
 
   createSendToken(newUser, 201, res);

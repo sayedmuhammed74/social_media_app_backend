@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
-// const morgan = require('morgan');
+const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const hemlet = require('helmet');
 const socketIo = require('socket.io');
@@ -14,8 +14,6 @@ const io = socketIo(server, {
       'https://full-stack-social-app.vercel.app',
       'http://localhost:5173',
     ],
-    // methods: ['GET', 'POST'],
-    // credentials: true, // Allow cookies to be sent and received
   },
 });
 
@@ -30,7 +28,7 @@ const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./controllers/errorController');
 
 require('dotenv').config();
-// if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 // CORs
 // app.use(cors());
 const allowedOrigins = [
