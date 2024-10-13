@@ -30,7 +30,6 @@ module.exports = (io) =>
         const onlineFriends = friends.filter(
           (friend) => onlineUsers[friend._id]
         );
-        console.log(onlineFriends);
         io.to(socket.id).emit('recieveOnlineFriends', onlineFriends);
       } catch (error) {
         console.error(error.message);
@@ -39,7 +38,6 @@ module.exports = (io) =>
     });
 
     socket.on('sendMessage', ({ message, to }) => {
-      console.log(onlineUsers[to]);
       io.to(onlineUsers[to]).emit('recieveMessage', message);
     });
 
