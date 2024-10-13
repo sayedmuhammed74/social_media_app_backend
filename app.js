@@ -2,21 +2,35 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
-const morgan = require('morgan');
+// const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const hemlet = require('helmet');
+const socketIo = require('socket.io');
+const http = require('http');
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: [
+      'https://full-stack-social-app.vercel.app',
+      'http://localhost:5173',
+    ],
+    // methods: ['GET', 'POST'],
+    // credentials: true, // Allow cookies to be sent and received
+  },
+});
 
 app.use(hemlet());
 // Routes
 const userRoute = require('./routes/userRoute');
 const postRoute = require('./routes/postRoute');
+const conversationRoute = require('./routes/conversation.route');
 // utils
 const AppError = require('./utils/AppError');
 // Global Error Controller
 const globalErrorHandler = require('./controllers/errorController');
 
 require('dotenv').config();
-if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+// if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 // CORs
 // app.use(cors());
 const allowedOrigins = [
@@ -44,6 +58,10 @@ app.use(cookieParser());
 // routes
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/posts', postRoute);
+app.use('/api/v1/conversations', conversationRoute);
+
+// Socket.io
+require('./socket/socket')(io);
 
 // Errors handling (route doen't exist)
 app.all('*', (req, res, next) => {
@@ -62,7 +80,7 @@ mongoose
   .catch(() => console.log('failed to connect to DB'));
 
 // listen
-const server = app.listen(process.env.PORT, () =>
+server.listen(process.env.PORT, () =>
   console.log(`Server is running on port ${process.env.PORT}`)
 );
 

@@ -140,27 +140,24 @@ exports.cancelFriendRequest = catchAsync(async (req, res, next) => {
 
 // Friends Controllers
 exports.getAllFriends = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
   const requests = await Request.find({
-    $or: [{ to: req.user._id }, { from: req.user._id }],
+    $or: [{ to: userId }, { from: userId }],
     status: 'accepted',
   })
     .populate({
       path: 'from',
-      select: '-role -createdAt -updatedAt -__v -id',
+      select: '-role -createdAt -updatedAt -__v -id -cover -email',
     })
     .populate({
       path: 'to',
-      select: '-role -createdAt -updatedAt -__v -id',
+      select: '-role -createdAt -updatedAt -__v -id -cover -email',
     });
 
   // Extract friends from the requests
-  const friends = requests.map((request) => {
-    if (request.from._id.equals(req.user._id)) {
-      return request.to; // The 'to' field is the friend
-    } else {
-      return request.from; // The 'from' field is the friend
-    }
-  });
+  const friends = requests.map((request) =>
+    request.from.equals(userId) ? request.to : request.from
+  );
 
   res.status(200).json({
     status: 'success',

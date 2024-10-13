@@ -1,9 +1,7 @@
 // Models
 const User = require('./../models/userModel');
-
 // Packages
 const jwt = require('jsonwebtoken');
-
 // utils
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/AppError');
@@ -38,6 +36,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+  // Check if image uploaded successfully
   if (!req.file) {
     return next(new AppError('failed to upload the image', 400));
   }
@@ -60,7 +59,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordConfirm,
     bio,
     birthdate,
-    picture: req.file.path,
+    // picture: req.file.path,
   });
 
   createSendToken(newUser, 201, res);
@@ -108,3 +107,9 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
+
+// exports.checkImage = catchAsync(async (req, res, next) => {
+//   upload.none();
+//   console.log(req.body);
+//   next;
+// });
