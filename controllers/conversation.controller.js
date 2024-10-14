@@ -1,3 +1,4 @@
+const { isObjectIdOrHexString, isValidObjectId } = require('mongoose');
 const Conversation = require('../models/conversation.model');
 const Message = require('../models/message.model');
 const catchAsync = require('../utils/catchAsync');
@@ -6,7 +7,7 @@ const catchAsync = require('../utils/catchAsync');
 exports.getAllConversations = catchAsync(async (req, res, next) => {
   const conversations = await Conversation.find({
     members: { $in: [req.user._id] },
-  });
+  }).sort({ updatedAt: -1 });
 
   res.status(200).json({
     status: 'success',
@@ -53,7 +54,22 @@ exports.getConversation = catchAsync(async (req, res, next) => {
 
 exports.getAllMessages = catchAsync(async (req, res, next) => {
   const { conversationId } = req.params;
-  const messages = await Message.find({ conversation: conversationId });
+  const { member } = req.query;
+  let messages;
+  if (!isValidObjectId(conversationId)) {
+    const conversation = await Conversation.findOne({
+      members: { $all: [req.user._id, member] },
+    });
+    if (conversation) {
+      messages = await Message.find({ conversation: conversationId });
+      conversationId = conversation._id;
+    } else {
+      messages = [];
+    }
+  } else {
+    messages = await Message.find({ conversation: conversationId });
+  }
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -75,15 +91,36 @@ exports.getMessage = catchAsync(async (req, res, next) => {
 
 exports.sendMessage = catchAsync(async (req, res, next) => {
   const { content } = req.body;
-  const { conversationId } = req.params;
+  const { member } = req.query;
+  let { conversationId } = req.params;
+
+  // Check if valid conversation id
+  if (!isValidObjectId(conversationId)) {
+    const conversation = await Conversation.findOne({
+      members: { $all: [req.user._id, member] },
+    });
+    if (!conversation) {
+      const newConversation = await Conversation.create({
+        members: [req.user._id, member],
+      });
+      conversationId = newConversation._id;
+    } else {
+      conversationId = conversation._id;
+    }
+  }
+
+  // Create Message
   const message = await Message.create({
     sender: req.user._id,
     conversation: conversationId,
     content,
   });
+
+  // Update Last Message
   await Conversation.findByIdAndUpdate(conversationId, {
     lastMessage: message._id,
   });
+
   res.status(201).json({
     status: 'success',
     data: {

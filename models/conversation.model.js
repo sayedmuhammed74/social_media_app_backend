@@ -17,6 +17,10 @@ const conversationSchema = new Schema(
       type: Date,
       default: Date.now,
     },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
@@ -34,11 +38,6 @@ conversationSchema.pre(/^find/, function (next) {
   );
   next();
 });
-
-// conversationSchema.pre(/^find/, function (next) {
-//   this.populate('messages');
-//   next();
-// });
 
 conversationSchema.pre(/^find/, function (next) {
   this.populate('lastMessage');
