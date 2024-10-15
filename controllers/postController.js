@@ -62,6 +62,8 @@ exports.createPost = catchAsync(async (req, res, next) => {
     media: req.body.media,
   });
 
+  post.user = req.user;
+
   res.status(201).json({
     status: 'success',
     data: {
