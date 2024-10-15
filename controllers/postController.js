@@ -1,9 +1,9 @@
 // Models
 const Post = require('./../models/postModel');
-const Like = require('../models/likeModel');
+const Like = require('./../models/likeModel');
+const Comment = require('./../models/commentModel');
 // Utils
-const catchAsync = require('../utils/catchAsync');
-const Comment = require('../models/commentModel');
+const catchAsync = require('./../utils/catchAsync');
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
   let posts;
@@ -153,6 +153,8 @@ exports.addComment = catchAsync(async (req, res, next) => {
     post: req.params.postId,
     content,
   });
+  comment.user = undefined;
+  comment.user = req.user;
   res.status(201).json({
     status: 'success',
     data: {
@@ -178,7 +180,7 @@ exports.updateComment = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteComment = catchAsync(async (req, res, next) => {
-  await Like.findByIdAndDelete(req.params.commentId);
+  await Comment.findByIdAndDelete(req.params.commentId);
   res.status(204).json({
     status: 'success',
     data: null,
