@@ -19,9 +19,10 @@ const io = socketIo(server, {
 
 app.use(hemlet());
 // Routes
-const userRoute = require('./routes/userRoute');
-const postRoute = require('./routes/postRoute');
+const userRoute = require('./routes/user.route');
+const postRoute = require('./routes/post.route');
 const conversationRoute = require('./routes/conversation.route');
+const notificationRoute = require('./routes/notification.route');
 // utils
 const AppError = require('./utils/AppError');
 // Global Error Controller
@@ -57,6 +58,7 @@ app.use(cookieParser());
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/posts', postRoute);
 app.use('/api/v1/conversations', conversationRoute);
+app.use('/api/v1/notifications', notificationRoute);
 
 // Socket.io
 require('./socket/socket')(io);

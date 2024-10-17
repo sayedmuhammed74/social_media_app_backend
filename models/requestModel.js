@@ -20,6 +20,10 @@ const requestSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const Request = model('Request', requestSchema);

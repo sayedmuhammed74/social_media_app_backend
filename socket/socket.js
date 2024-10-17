@@ -25,6 +25,7 @@ module.exports = (io) =>
       await User.findOneAndUpdate({ _id: userId }, { isOnline: true });
     });
 
+    // Get Online Friends
     socket.on('getOnlineFriends', ({ friends }) => {
       try {
         const onlineFriends = friends.filter(
@@ -37,8 +38,17 @@ module.exports = (io) =>
       }
     });
 
+    // Send & Recieve Messages
     socket.on('sendMessage', ({ message, to }) => {
       io.to(onlineUsers[to]).emit('recieveMessage', message);
+    });
+
+    // Send Notifications
+    socket.on('handleNotification', ({ notification }) => {
+      io.to(onlineUsers[notification.user]).emit(
+        'sendNotification',
+        notification
+      );
     });
 
     // User has Lefted

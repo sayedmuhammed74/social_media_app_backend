@@ -19,7 +19,7 @@ const {
 // Uoload Product Image
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('./../utils/cloudinaryConfig');
+const cloudinary = require('../utils/cloudinaryConfig');
 
 // Creare Cloudinary Storage
 const storage = new CloudinaryStorage({

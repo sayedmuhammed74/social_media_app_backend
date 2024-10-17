@@ -117,6 +117,9 @@ exports.addLike = catchAsync(async (req, res, next) => {
     user: req.user._id,
     post: req.params.postId,
   });
+
+  like = await Like.findById(like._id);
+
   res.status(201).json({
     status: 'success',
     data: {
