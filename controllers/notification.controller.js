@@ -3,8 +3,25 @@ const Notification = require('./../models/notificationModel');
 // Utils
 const catchAsync = require('../utils/catchAsync');
 
+// Expect Messages
 exports.getAllNotifications = catchAsync(async (req, res, next) => {
-  const notifications = await Notification.find({ user: req.user._id });
+  const notifications = await Notification.find({
+    user: req.user._id,
+    type: { $ne: 'message' },
+  });
+  res.status(200).json({
+    status: 'success',
+    data: {
+      notifications,
+    },
+  });
+});
+
+exports.getMessageNotifications = catchAsync(async (req, res, next) => {
+  const notifications = await Notification.find({
+    user: req.user._id,
+    type: 'message',
+  });
   res.status(200).json({
     status: 'success',
     data: {
@@ -57,7 +74,8 @@ exports.readNotification = catchAsync(async (req, res, next) => {
 });
 
 exports.removeNotification = catchAsync(async (req, res, next) => {
-  await Notification.findByIdAndDelete(req.params.notificationId);
+  const { userId, referenceId, type } = req.query;
+  await Notification.findOneAndDelete({ user: userId, referenceId, type });
   res.status(204).json({
     status: 'success',
     data: null,
