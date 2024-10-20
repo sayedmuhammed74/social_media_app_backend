@@ -2,10 +2,29 @@
 const Post = require('./../models/postModel');
 const Like = require('./../models/likeModel');
 const Comment = require('./../models/commentModel');
+const Request = require('./../models/requestModel');
 // Utils
 const catchAsync = require('./../utils/catchAsync');
 
+const getFriendsIds = async (userId) => {
+  // Get friend IDs
+  const friendRequests = await Request.find({
+    $or: [
+      { from: userId, status: 'accepted' }, // User's outgoing accepted requests
+      { to: userId, status: 'accepted' }, // User's incoming accepted requests
+    ],
+  }).select('from to');
+
+  const friendIds = friendRequests.map((request) => {
+    return request.from.equals(userId) ? request.to : request.from; // Get the friend's ID
+  });
+  return friendIds;
+};
+
 exports.getAllPosts = catchAsync(async (req, res, next) => {
+  // Get friend IDs
+  const friendIds = await getFriendsIds(req.user._id);
+
   let posts;
   let totalPosts;
   let totalPages;
@@ -23,7 +42,7 @@ exports.getAllPosts = catchAsync(async (req, res, next) => {
     totalPosts = await Post.find({ user: req.query.userId }).countDocuments(); // Get total number of posts
     totalPages = Math.ceil(totalPosts / limit); // Calculate total pages
   } else {
-    posts = await Post.find({ user: { $ne: req.user._id } })
+    posts = await Post.find({ user: { $in: friendIds } })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
