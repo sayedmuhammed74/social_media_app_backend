@@ -52,8 +52,13 @@ app.use(
 );
 
 app.options('*', cors());
+// Parse incoming JSON data
 app.use(express.json());
+// Parse incoming FormData or URL-encoded data
+app.use(express.urlencoded({ extended: true }));
+// Parse Cookies
 app.use(cookieParser());
+
 // routes
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/posts', postRoute);

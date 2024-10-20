@@ -52,52 +52,7 @@ module.exports = (io) =>
     });
 
     // User has Lefted
-    socket.on('disconnected', (userId) => offlineUser(userId));
+    socket.on('disconnected', (userId) => {
+      offlineUser(userId);
+    });
   });
-
-//   try {
-//     await User.findOneAndUpdate({ _id: userId }, { isOnline: true });
-
-//     // Get friends of the user
-//     const user = await User.findOne({ userId });
-//     if (user && user.friends) {
-//       const onlineFriends = user.friends.filter(
-//         (friendId) => onlineUsers[friendId]
-//       );
-
-//       // Notify only the online friends
-//       onlineFriends.forEach((friendId) => {
-//         io.to(onlineUsers[friendId]).emit('friendOnline', userId);
-//       });
-//     }
-
-//     const requests = await Request.find({
-//       $or: [{ to: req.user._id }, { from: req.user._id }],
-//       status: 'accepted',
-//     })
-//       .populate({
-//         path: 'from',
-//         select: '-role -createdAt -updatedAt -__v -id',
-//       })
-//       .populate({
-//         path: 'to',
-//         select: '-role -createdAt -updatedAt -__v -id',
-//       });
-
-//     // Extract friends from the requests
-//     const friends = requests.map((request) => {
-//       if (request.from._id.equals(req.user._id)) {
-//         return request.to; // The 'to' field is the friend
-//       } else {
-//         return request.from; // The 'from' field is the friend
-//       }
-//     });
-//   } catch (error) {
-//     console.error('Error updating user status:', error);
-//   }
-// });
-
-// socket.on('getOnlineUsers', (friends) => {
-//   const onlineFriends = sendOnlineUsers(friends);
-//   io.to(socket.id).emit('onlineFriends', onlineFriends);
-// });

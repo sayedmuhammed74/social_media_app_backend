@@ -46,7 +46,7 @@ exports.getAllPosts = catchAsync(async (req, res, next) => {
 });
 
 exports.getPost = catchAsync(async (req, res, next) => {
-  const post = await Post.findOne({ _id: req.params.postId });
+  const post = await Post.findById(req.params.postId);
   res.status(200).json({
     status: 'sucess',
     data: {

@@ -107,9 +107,3 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
-
-// exports.checkImage = catchAsync(async (req, res, next) => {
-//   upload.none();
-//   console.log(req.body);
-//   next;
-// });

@@ -15,7 +15,6 @@ const handleDuplicateErrorDB = (err) => {
 const handleValidationErrorDB = (err) => {
   const errors = Object.values(err.errors).map((el) => el.message);
   const message = `${errors.join('. ')}`;
-  console.log(message);
   return new AppError(message, 400);
 };
 
@@ -57,8 +56,7 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    let error;
-
+    let error = { ...err };
     if (err.name === 'CastError') error = handleCastErrorDB(err);
     if (err.name === 'ValidationError') error = handleValidationErrorDB(err);
     if (err.errorResponse?.code === 11000) error = handleDuplicateErrorDB(err);

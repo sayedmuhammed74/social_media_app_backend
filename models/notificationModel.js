@@ -1,6 +1,7 @@
 const { Schema, model, Types } = require('mongoose');
 
 const notificationSchema = new Schema({
+  creator: { type: Types.ObjectId, ref: 'User' },
   user: { type: Types.ObjectId, ref: 'User' },
   type: {
     type: String,
@@ -26,6 +27,11 @@ const notificationSchema = new Schema({
     default: false,
   },
   createdAt: { type: Date, default: Date.now },
+});
+
+notificationSchema.pre(/^find/, function (next) {
+  this.populate('creator');
+  next();
 });
 
 const Notification = model('Notification', notificationSchema);

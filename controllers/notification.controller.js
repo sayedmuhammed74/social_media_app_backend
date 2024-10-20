@@ -21,7 +21,8 @@ exports.getMessageNotifications = catchAsync(async (req, res, next) => {
   const notifications = await Notification.find({
     user: req.user._id,
     type: 'message',
-  });
+  }).populate({ path: 'referenceId', model: 'Message' });
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -43,12 +44,17 @@ exports.getOneNotification = catchAsync(async (req, res, next) => {
 exports.addNotification = catchAsync(async (req, res, next) => {
   const { userId, type, referenceId, referenceType } = req.body;
 
-  const notification = await Notification.create({
+  let notification = await Notification.create({
+    creator: req.user._id,
     user: userId,
     type,
     referenceId,
     referenceType,
   });
+
+  notification = await Notification.findById(notification._id).populate(
+    'creator'
+  );
 
   res.status(201).json({
     status: 'success',
@@ -61,8 +67,7 @@ exports.addNotification = catchAsync(async (req, res, next) => {
 exports.readNotification = catchAsync(async (req, res, next) => {
   const notification = await Notification.findByIdAndUpdate(
     req.params.notificationId,
-    { isRead: true },
-    { new: true }
+    { isRead: true }
   );
 
   res.status(200).json({

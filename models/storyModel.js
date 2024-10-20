@@ -7,6 +7,12 @@ const storySchema = new Schema(
       ref: 'User',
       required: [true, 'Story must have a creator'],
     },
+    type: {
+      type: String,
+      enum: ['text', 'image'],
+      default: 'text',
+    },
+    background: String,
     image: String,
     text: String,
     createdAt: {
@@ -19,12 +25,6 @@ const storySchema = new Schema(
         return new Date(Date.now() + 24 * 60 * 60 * 1000);
       },
     },
-    // expiresIn: {
-    //   type: Date,
-    //   default: function () {
-    //     return new Date(Date.now() + (this.customExpiry || 24 * 60 * 60 * 1000)); // Allow custom expiry
-    //   },
-    // },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
@@ -48,7 +48,6 @@ storySchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
     select: '-email -role -createdAt -birthdate -bio -__v',
-    // match: { _id: { $in: this._friendIds } },
   });
   next();
 });

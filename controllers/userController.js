@@ -75,11 +75,18 @@ exports.getAllStories = catchAsync(async (req, res, next) => {
 });
 
 exports.createStory = catchAsync(async (req, res, next) => {
+  const { text, type, background, image } = req.body;
+
   const story = await Story.create({
     user: req.user._id,
-    text: req.body.text,
-    image: req.body.image,
+    text,
+    type,
+    background,
+    image,
   });
+
+  story.user = undefined;
+  story.user = req.user;
 
   res.status(201).json({
     status: 'success',
